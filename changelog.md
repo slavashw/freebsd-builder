@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Add support for FreeBSD 15.0 on RISC-V 64 ([action##36](https://github.com/cross-platform-actions/action/issues/36))
+
 ## [0.15.0] - 2026-06-20
 ### Added
 - Add support for FreeBSD 15.1 ([#15](https://github.com/cross-platform-actions/freebsd-builder/issues/15), [action#153](https://github.com/cross-platform-actions/action/issues/113))
