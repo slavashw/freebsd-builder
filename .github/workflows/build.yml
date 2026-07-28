@@ -9,6 +9,7 @@ on:
   pull_request:
     branches:
       - master
+      - main
 
 jobs:
   build:
@@ -19,56 +20,12 @@ jobs:
       matrix:
         expected_hostname: [runnervmg1sw1.local]
         version:
-          - '12.2'
-          - '13.0'
-          - '13.1'
-          - '13.2'
-          - '13.3'
-          - '13.4'
-          - '13.5'
-          - '14.0'
-          - '14.1'
-          - '14.2'
-          - '14.3'
-          - '14.4'
-          - '15.0'
           - '15.1'
 
         architecture:
           - name: x86-64
             qemu: x86
             uname: amd64
-
-          - name: arm64
-            qemu: aarch64
-
-        exclude:
-          - version: '12.2'
-            architecture:
-              name: arm64
-              qemu: aarch64
-
-        include:
-          - version: '12.4'
-            copy_from_previous_release: true
-            expected_hostname: ''
-            architecture:
-              name: arm64
-              qemu: aarch64
-
-          - version: '12.4'
-            expected_hostname: runnervmg1sw1.local
-            architecture:
-              name: x86-64
-              qemu: x86
-              uname: amd64
-
-          - version: '15.0'
-            expected_hostname: runnervmg1sw1.local
-            architecture:
-              name: riscv64
-              qemu: riscv64
-              uname: riscv
 
     steps:
       - name: Clone Repository
@@ -96,39 +53,21 @@ jobs:
         with:
           version: "1.9.1"
 
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
-      #   with:
-      #     limit-access-to-actor: true
-
       - name: Build Image
-        if: '!matrix.copy_from_previous_release'
         env:
           PACKER_LOG: 1
         run: |
           ./build.sh '${{ matrix.version }}' '${{ matrix.architecture.name }}' \
             -var 'headless=true'
 
-      - name: Copy from previous release
-        if: matrix.copy_from_previous_release
-        run: |
-          curl -O -L \
-            --retry 3 \
-            --create-dirs \
-            --output-dir output \
-            https://github.com/cross-platform-actions/freebsd-builder/releases/download/v0.5.0/freebsd-${{ matrix.version }}-${{ matrix.architecture.name }}.qcow2
-
       - name: Start Local HTTP Server
-        if: matrix.architecture.name != 'riscv64'
         run: python3 -m http.server 8080 --directory output &
 
       - name: Create File
-        if: matrix.architecture.name != 'riscv64'
         run: echo 'host to guest' > host_to_guest.txt
 
       - name: Test Image
-        if: matrix.architecture.name != 'riscv64'
-        uses: cross-platform-actions/action@master
+        uses: cross-platform-actions/action@v1.3.0
         with:
           operating_system: freebsd
           architecture: ${{ matrix.architecture.name }}
@@ -159,7 +98,6 @@ jobs:
             echo 'guest to host' > guest_to_host.txt
 
       - name: Verify File Synchronization
-        if: matrix.architecture.name != 'riscv64'
         run: cat guest_to_host.txt | grep -q 'guest to host'
 
       - name: Create Release
@@ -170,9 +108,6 @@ jobs:
         run: |
           version="${github_ref_name#v}"
 
-          # Matrix jobs run in parallel; the first to arrive creates the
-          # draft release, the rest upload their artifacts to it.
-          # (gh release create with --draft does not deduplicate by tag.)
           if gh release view "$github_ref_name" >/dev/null 2>&1; then
             gh release upload "$github_ref_name" output/* --clobber
           else

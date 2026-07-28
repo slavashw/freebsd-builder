@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Add support for FreeBSD 15.0 on RISC-V 64 ([action##36](https://github.com/cross-platform-actions/action/issues/36))
+## [15.1.0] - 2026-07-28
+### Added
+- BYO CI image for [slavashw/rdma-core](https://github.com/slavashw/rdma-core): FreeBSD 15.1 x86-64 only (trimmed build matrix).
 
 ## [0.15.0] - 2026-06-20
 ### Added

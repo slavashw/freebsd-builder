@@ -1,4 +1,16 @@
-# FreeBSD Builder
+# FreeBSD Builder (slavashw BYO CI)
+
+Org-owned fork of [cross-platform-actions/freebsd-builder](https://github.com/cross-platform-actions/freebsd-builder). Builds **FreeBSD 15.1 x86-64** only for use with `cross-platform-actions/action` `image_url` in [slavashw/rdma-core](https://github.com/slavashw/rdma-core).
+
+## Release and CI image URL
+
+1. Push to `main` and tag `v15.1.0` (or bump the tag when rebuilding).
+2. Wait for the **Build VM Disk Image** workflow to finish; open the draft GitHub Release and publish it.
+3. Pin rdma-core CI to the asset URL (versioned tag, not `Latest`):
+
+   `https://github.com/slavashw/freebsd-builder/releases/download/v15.1.0/freebsd-15.1-x86-64.qcow2`
+
+---
 
 This project builds the FreeBSD VM image for the
 [cross-platform-actions/action](https://github.com/cross-platform-actions/action)
