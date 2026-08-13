@@ -69,7 +69,7 @@ jobs:
         run: echo 'host to guest' > host_to_guest.txt
 
       - name: Test Image
-        uses: cross-platform-actions/action@v1.3.0
+        uses: cross-platform-actions/action@v1.4.0
         with:
           operating_system: freebsd
           architecture: ${{ matrix.architecture.name }}
